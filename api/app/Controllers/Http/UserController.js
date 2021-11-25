@@ -1,4 +1,4 @@
-'use strict'
+"use strict";
 const Company = use("App/Models/Company");
 const User = use("App/Models/User");
 
@@ -19,15 +19,16 @@ class UserController {
    * @param {Response} ctx.response
    * @param {View} ctx.view
    */
-   async index({request, auth}) {
-    const users = await User.all() 
-    let result = []
+  async index({ request, auth }) {
+    const users = await User.all();
+    let result = [];
 
-    for (const iterator of users["rows"]) {  // no caso a linha sao os usuarios listados
-        if(iterator.company_id === auth.user.company_id){
-            result.push(iterator)
-          }
-    } 
+    for (const iterator of users["rows"]) {
+      // no caso a linha sao os usuarios listados
+      if (iterator.company_id === auth.user.company_id) {
+        result.push(iterator);
+      }
+    }
 
     return result;
   }
@@ -40,26 +41,26 @@ class UserController {
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async storeNoAuth ({ request, response }) { 
-
+  async storeNoAuth({ request, response }) {
     const data = request.only(["username", "email", "password", "company_id"]);
 
     const user = await User.create(data);
 
-    return user; 
-
+    return user;
   }
 
-  
+  async storeAuth({ request, auth }) {
+    const data = request.only(["username", "email", "password"]);
 
-  async storeAuth ({ request, auth }) { 
+    let resul = {
+      username: data.username,
+      email: data.email,
+      password: data.password,
+      company_id: auth.user.company_id,
+    };
+    const user = await User.create(resul);
 
-    const data = request.only(["username", "email", "password", `${auth.user.company_id}`]);
-
-    const user = await User.create(data);
-
-    return user; 
-
+    return user;
   }
   /**
    * Display a single company.
@@ -70,8 +71,7 @@ class UserController {
    * @param {Response} ctx.response
    * @param {View} ctx.view
    */
-  async show ({ params, request, response, view }) {
-  }
+  async show({ params, request, response, view }) {}
 
   /**
    * Render a form to update an existing company.
@@ -82,8 +82,7 @@ class UserController {
    * @param {Response} ctx.response
    * @param {View} ctx.view
    */
-  async edit ({ params, request, response, view }) {
-  }
+  async edit({ params, request, response, view }) {}
 
   /**
    * Update company details.
@@ -93,8 +92,7 @@ class UserController {
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async update ({ params, request, response }) {
-  }
+  async update({ params, request, response }) {}
 
   /**
    * Delete a company with id.
@@ -104,8 +102,7 @@ class UserController {
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async destroy ({ params, request, response }) {
-  }
+  async destroy({ auth }) {}
 }
 
-module.exports = UserController
+module.exports = UserController;
