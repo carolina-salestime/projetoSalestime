@@ -19,7 +19,7 @@ class UserController {
    * @param {Response} ctx.response
    * @param {View} ctx.view
    */
-  async index({ request, auth }) {
+  async index({ auth }) {
     const users = await User.all();
     let result = [];
 
