@@ -82,7 +82,7 @@ class UserController {
    * @param {Response} ctx.response
    * @param {View} ctx.view
    */
-  async edit({ params, request, response, view }) {}
+  async edit({ params, request, auth, response }) {}
 
   /**
    * Update company details.
@@ -92,7 +92,17 @@ class UserController {
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async update({ params, request, response }) {}
+  async update({ params, request, response, auth }) {
+    const data = request.only(["username", "email", "password"]);
+    const user = await User.findBy("id", params.id);
+    if (auth.user.company_id === user.company_id) {
+      user.merge(data);
+      user.save();
+      return user;
+    } else {
+      return response.status(401);
+    }
+  }
 
   /**
    * Delete a company with id.
@@ -102,7 +112,15 @@ class UserController {
    * @param {Request} ctx.request
    * @param {Response} ctx.response
    */
-  async destroy({ auth }) {}
+  async destroy({ params, auth }) {
+    const user = await User.findBy("id", params.id);
+    if (auth.user.company_id === user.company_id) {
+      user.delete();
+      return user;
+    } else {
+      return response.status(401);
+    }
+  }
 }
 
 module.exports = UserController;
